@@ -1,4 +1,8 @@
-## Requirements:
+# autocomplete
+
+[Unstyled autocomplete component](src/components/Autocomplete)
+
+## Dev requirements:
 
 - Node
 - npm
@@ -7,8 +11,13 @@
   - vscode-styled-components
   - Code Spell Checker
 
-## In this project:
+## Used in this project:
 
 - webpack
 - typescript
 - react
+
+## Develop
+
+- `npm i`
+- `npm start`
