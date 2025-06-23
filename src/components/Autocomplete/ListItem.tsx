@@ -26,11 +26,18 @@ export const SelectedItem = styled(UnselectedItem)`
   }
 `;
 
-export interface Item<T extends string> {
-  id: NonEmptyString<T>;
+export interface ItemProps {
   displayedContent: ReactNode;
   searchableText: string;
 }
+
+export type Item<T extends string> = ItemProps & {
+  id: NonEmptyString<T>;
+};
+
+export type PublicSelectedItem = ItemProps & {
+  id: string;
+};
 
 export interface ListItemProps<T extends string> {
   children: ReactNode;
@@ -41,7 +48,7 @@ export interface ListItemProps<T extends string> {
     UnselectedItem?: typeof UnselectedItem;
     SelectedItem?: typeof SelectedItem;
   };
-  select: (item: Item<T>) => void;
+  select: (item: PublicSelectedItem) => void;
 }
 
 export default function ListItem<T extends string>({

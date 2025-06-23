@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NonEmptyString } from 'src/types';
 import Button, { StyledButton } from './Button';
-import ListItem, { Item, SelectedItem, UnselectedItem } from './ListItem';
+import ListItem, { Item, PublicSelectedItem, SelectedItem, UnselectedItem } from './ListItem';
 import {
   Container,
   Input,
@@ -14,7 +14,9 @@ import {
   SelectedInputsArea,
 } from './styledComponents';
 
-type SelectedItems<O extends string> = { [key: string]: Item<O> | null };
+type SelectedItems = { [key: string]: PublicSelectedItem | null };
+
+export type SelectedItem = PublicSelectedItem;
 
 interface Props<L extends string, O extends string> {
   label: NonEmptyString<L>;
@@ -33,6 +35,7 @@ interface Props<L extends string, O extends string> {
     UnselectedItem?: typeof UnselectedItem;
     SelectedItem?: typeof SelectedItem;
   };
+  onSelectionChange: (selectedItems: PublicSelectedItem[]) => void;
 }
 
 export default function Autocomplete<L extends string, O extends string>({
@@ -41,14 +44,19 @@ export default function Autocomplete<L extends string, O extends string>({
   limit,
   doHideSelectedFromList = false,
   styledComponents = {},
+  onSelectionChange,
 }: Props<L, O>) {
   const [inputValue, setInputValue] = useState('');
   const [expanded, setExpanded] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<SelectedItems<O>>({});
+  const [selectedItems, setSelectedItems] = useState<SelectedItems>({});
 
   const LABEL_ID = `label-${label}`;
   const COMBOBOX_ID = `combobox-${label}`;
   const LISTBOX_ID = `listbox-${label}`;
+
+  useEffect(() => {
+    onSelectionChange(Object.values(selectedItems).filter((item) => !!item));
+  }, [selectedItems]);
 
   return (
     <Container as={styledComponents.Container}>
@@ -134,15 +142,15 @@ export default function Autocomplete<L extends string, O extends string>({
   );
 }
 
-type FilteringOptions<O extends string> = {
+type FilteringOptions = {
   doIncludeSelected?: boolean;
-  selectedItems?: SelectedItems<O>;
+  selectedItems?: SelectedItems;
 };
 
 function filterItems<O extends string>(
   items: Item<O>[],
   searchedText: string,
-  { doIncludeSelected = true, selectedItems = {} }: FilteringOptions<O> = {},
+  { doIncludeSelected = true, selectedItems = {} }: FilteringOptions = {},
 ) {
   return items.filter(
     (item) =>
@@ -151,7 +159,7 @@ function filterItems<O extends string>(
   );
 }
 
-function countSelections<O extends string>(selectedItems: SelectedItems<O>): number {
+function countSelections(selectedItems: SelectedItems): number {
   return Object.values(selectedItems).reduce((sum, item) => {
     return item ? sum + 1 : sum;
   }, 0);

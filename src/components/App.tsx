@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import styled from 'styled-components';
-import Autocomplete from 'components/Autocomplete';
+import Autocomplete, { SelectedItem } from 'components/Autocomplete';
 
 const MockCustomItem = styled.li`
   background: lightblue;
@@ -10,12 +11,17 @@ const MockCustomItem = styled.li`
 `;
 
 export default function App() {
+  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
+
+  console.log({ selectedItems });
+
   return (
     <div>
       <Autocomplete
         label="My label"
         limit={2}
         doHideSelectedFromList
+        onSelectionChange={(selectedItems) => setSelectedItems(selectedItems)}
         items={[
           {
             id: 'a',
