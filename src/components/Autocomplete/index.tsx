@@ -108,8 +108,11 @@ export default function Autocomplete<L extends string, O extends string>({
 
           <Button
             styledContainer={styledComponents.ResetButton}
-            onClick={() => setSelectedItems({})}
-            disabled={!countSelections(selectedItems)}
+            onClick={() => {
+              setSelectedItems({});
+              setInputValue('');
+            }}
+            disabled={!countSelections(selectedItems) && !inputValue}
           >
             X
           </Button>
