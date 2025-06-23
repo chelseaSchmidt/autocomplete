@@ -60,7 +60,14 @@ export default function Autocomplete<L extends string, O extends string>({
 
   return (
     <Container as={styledComponents.Container}>
-      {expanded && <InvisibleOverlay onClick={() => setExpanded(false)} />}
+      {expanded && (
+        <InvisibleOverlay
+          onClick={() => {
+            setExpanded(false);
+            setInputValue('');
+          }}
+        />
+      )}
 
       <Label as={styledComponents.Label} id={LABEL_ID} htmlFor={COMBOBOX_ID}>
         {label}
@@ -125,13 +132,14 @@ export default function Autocomplete<L extends string, O extends string>({
               isSelected={!!selectedItems[item.id]}
               disabled={!selectedItems[item.id] && countSelections(selectedItems) >= limit}
               styledComponents={styledComponents}
-              select={(item) =>
-                setSelectedItems(
-                  selectedItems[item.id]
-                    ? { ...selectedItems, [item.id]: null }
-                    : { ...selectedItems, [item.id]: item },
-                )
-              }
+              select={(item) => {
+                if (selectedItems[item.id]) {
+                  setSelectedItems({ ...selectedItems, [item.id]: null });
+                } else {
+                  setSelectedItems({ ...selectedItems, [item.id]: item });
+                  setInputValue('');
+                }
+              }}
             >
               {item.displayedContent}
             </ListItem>
