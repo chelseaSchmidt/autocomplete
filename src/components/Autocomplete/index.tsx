@@ -153,16 +153,16 @@ export default function Autocomplete<L extends string, O extends string>({
   );
 }
 
-type FilteringOptions = {
-  doIncludeSelected?: boolean;
-  selectedItems?: SelectedItems;
-};
-
 function filterItems<O extends string>(
   items: Item<O>[],
   searchedText: string,
-  { doIncludeSelected = true, selectedItems = {} }: FilteringOptions = {},
+  options: {
+    doIncludeSelected?: boolean;
+    selectedItems?: SelectedItems;
+  } = {},
 ) {
+  const { doIncludeSelected = true, selectedItems = {} } = options;
+
   return items.filter(
     (item) =>
       item.searchableText.trim().toLowerCase().includes(searchedText.trim().toLowerCase()) &&
