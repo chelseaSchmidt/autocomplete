@@ -1,47 +1,48 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import Autocomplete, { SelectedItem } from 'components/Autocomplete';
-
-const MockCustomItem = styled.li`
-  background: lightblue;
-
-  &:hover {
-    border: 1px solid blue;
-  }
-`;
+import Autocomplete from 'components/Autocomplete';
 
 export default function App() {
-  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-
-  console.log({ selectedItems });
-
   return (
     <div>
       <Autocomplete
         label="My label"
-        limit={2}
-        doHideSelectedFromList
-        onSelectionChange={(selectedItems) => setSelectedItems(selectedItems)}
+        labelText="My label"
+        placeholder="Select"
+        limit={3}
+        onSelectionChange={console.log}
         items={[
           {
             id: 'a',
-            displayedContent: <div>abcd</div>,
-            searchableText: 'abcd',
+            displayedContent: 'Joe',
+            searchableText: 'Joe',
+            data: { test: 1 },
           },
           {
             id: 'b',
-            displayedContent: <div>defg</div>,
-            searchableText: 'defg',
+            displayedContent: <div>Jane</div>,
+            searchableText: 'Jane',
+            data: { test: 2 },
           },
           {
             id: 'c',
-            displayedContent: <div>Ghij</div>,
-            searchableText: 'Ghij',
+            displayedContent: <div>Anna</div>,
+            searchableText: 'Anna',
+            data: { test: 3 },
+          },
+          {
+            id: 'd',
+            displayedContent: <div>Kyle</div>,
+            searchableText: 'Kyle',
+            data: { test: 4 },
           },
         ]}
-        styledComponents={{
-          UnselectedItem: MockCustomItem,
-        }}
+        // shouldHideSelected
+        // noItemsText=""
+        // disabledItemStyle={}
+        // selectedItemStyle={}
+        // deleteIconLineStyle={}
+        // deleteIconSize={}
+        // listboxMargins={}
+        // styledComponents={}
       />
     </div>
   );

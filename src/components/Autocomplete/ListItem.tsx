@@ -1,75 +1,97 @@
 import { ReactNode } from 'react';
-import styled from 'styled-components';
-import { NonEmptyString } from 'src/types';
+import omit from 'lodash/omit';
+import styled, { CSSProperties } from 'styled-components';
+import { PSEUDO_CSS_KEYS, PseudoCSSProperties } from './types';
 
-export const UnselectedItem = styled.li`
+type LiProps = {
+  $isSelected: boolean;
+  $selectedStyle?: CSSProperties & PseudoCSSProperties;
+  $disabledStyle?: CSSProperties;
+};
+
+export const Li = styled.li<LiProps>`
+  all: unset;
+  display: block;
   cursor: pointer;
+  background: white;
+
+  ${({ $isSelected, $selectedStyle }) =>
+    $isSelected
+      ? {
+          background: 'lightyellow',
+          color: 'orange',
+          ...omit($selectedStyle, PSEUDO_CSS_KEYS),
+        }
+      : ''}
 
   &:hover {
     background: #ddd;
+    ${({ $isSelected, $selectedStyle }) =>
+      $isSelected ? { background: 'yellow', ...$selectedStyle?.['&:hover'] } : ''}
+  }
+
+  &:focus-visible {
+    background: #ffffe0;
+    ${({ $isSelected, $selectedStyle }) =>
+      $isSelected ? { ...$selectedStyle?.['&:focus-visible'] } : ''}
   }
 
   &[aria-disabled='true'] {
     cursor: not-allowed;
     background: #ccc;
     color: #999;
+    ${({ $disabledStyle }) => ({ ...$disabledStyle })}
+    ${({ $isSelected, $selectedStyle }) =>
+      $isSelected ? { ...$selectedStyle?.['&:disabled'] } : ''}
   }
 `;
 
-export const SelectedItem = styled(UnselectedItem)`
-  cursor: pointer;
-  background: lightyellow;
-  color: orange;
+const StyledLi = styled(Li);
 
-  &:hover {
-    background: yellow;
-  }
-`;
-
-export interface ItemProps {
+export interface Item<T> {
+  id: string;
   displayedContent: ReactNode;
   searchableText: string;
+  data: T;
 }
 
-export type Item<T extends string> = ItemProps & {
-  id: NonEmptyString<T>;
-};
-
-export type PublicSelectedItem = ItemProps & {
-  id: string;
-};
-
-export interface ListItemProps<T extends string> {
+export interface ListItemProps<T> {
   children: ReactNode;
   item: Item<T>;
   isSelected: boolean;
   disabled: boolean;
+  disabledStyle?: CSSProperties;
+  selectedStyle?: CSSProperties & PseudoCSSProperties;
   styledComponents?: {
-    UnselectedItem?: typeof UnselectedItem;
-    SelectedItem?: typeof SelectedItem;
+    ListItem?: typeof Li | typeof StyledLi;
   };
-  select: (item: PublicSelectedItem) => void;
+  select: (item: Item<T>) => void;
 }
 
-export default function ListItem<T extends string>({
+export default function ListItem<T>({
   children,
   item,
   isSelected,
   disabled,
   styledComponents = {},
+  disabledStyle,
+  selectedStyle,
   select,
 }: ListItemProps<T>) {
-  const Container = isSelected ? SelectedItem : UnselectedItem;
-
   return (
-    <Container
+    <Li
       role="option"
       id={item.id}
       aria-disabled={disabled}
-      onClick={disabled ? undefined : () => select(item)}
-      as={isSelected ? styledComponents.SelectedItem : styledComponents.UnselectedItem}
+      onClick={() => !disabled && select(item)}
+      onKeyUp={(e) => e.key === 'Enter' && !disabled && select(item)}
+      $isSelected={isSelected}
+      $selectedStyle={selectedStyle}
+      $disabledStyle={disabledStyle}
+      as={styledComponents.ListItem}
+      tabIndex={0}
     >
       {children}
-    </Container>
+    </Li>
   );
 }
