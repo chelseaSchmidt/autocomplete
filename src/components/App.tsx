@@ -5,7 +5,6 @@ export default function App() {
     <div>
       <Autocomplete
         label="My label"
-        labelText="My label"
         placeholder="Select"
         limit={3}
         onSelectionChange={console.log}
@@ -35,6 +34,7 @@ export default function App() {
             data: { test: 4 },
           },
         ]}
+        // labelDecoration
         // shouldHideSelected
         // noItemsText=""
         // disabledItemStyle={}
